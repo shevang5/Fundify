@@ -39,7 +39,7 @@ router.post('/verify', async (req, res) => {
         // Update the Campaign total and add donor in Database
         await Campaign.findByIdAndUpdate(campaignId, {
             $inc: { currentAmount: amount },
-            $push: { donors: { name: req.body.donorName || "Anonymous", amount: amount, method: "online" } }
+            $push: { donors: { name: req.body.donorName || "Anonymous", amount: amount, type: "online" } }
         });
         res.json({ status: "success" });
     } else {
@@ -61,7 +61,7 @@ router.post('/offline', async (req, res) => {
             campaignId,
             {
                 $inc: { currentAmount: amount },
-                $push: { donors: { name: donorName, amount: amount, method: "offline" } }
+                $push: { donors: { name: donorName, amount: amount, type: "offline" } }
             },
             { new: true }
         );

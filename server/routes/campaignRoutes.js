@@ -30,12 +30,10 @@ router.get('/:id', async (req, res) => {
     }
 });
 
-// @desc    Create a new campaign
-// @route   POST /api/campaigns
 // @desc    Create a new campaign (Private)
 // We add 'protect' here so only logged-in users can reach this logic
 router.post('/', protect, async (req, res) => {
-    const { title, description, targetAmount, deadline, image } = req.body;
+    const { title, description, targetAmount, deadline, image, offlineCollectorName, offlineCollectorEmail } = req.body;
 
     try {
         const campaign = new Campaign({
@@ -44,12 +42,43 @@ router.post('/', protect, async (req, res) => {
             targetAmount,
             deadline,
             image,
+            offlineCollectorName,
+            offlineCollectorEmail,
             // req.user comes from the 'protect' middleware after decoding the token
             organizer: req.user.id,
         });
 
         const createdCampaign = await campaign.save();
         res.status(201).json(createdCampaign);
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+    }
+});
+
+// @desc    Record offline donation
+// @route   POST /api/campaigns/offline-donation
+router.post('/offline-donation', async (req, res) => {
+    const { campaignId, amount, donorName } = req.body;
+
+    try {
+        const campaign = await Campaign.findById(campaignId);
+        if (!campaign) {
+            return res.status(404).json({ message: 'Campaign not found' });
+        }
+
+        // Add donor to the list with type 'offline'
+        campaign.donors.push({
+            name: donorName,
+            amount: parseInt(amount),
+            type: 'offline',
+            date: new Date()
+        });
+
+        // Update current amount
+        campaign.currentAmount += parseInt(amount);
+
+        const updatedCampaign = await campaign.save();
+        res.json(updatedCampaign);
     } catch (error) {
         res.status(400).json({ message: error.message });
     }

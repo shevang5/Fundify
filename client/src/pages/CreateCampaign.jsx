@@ -9,7 +9,9 @@ const CreateCampaign = () => {
         description: '',
         targetAmount: '',
         deadline: '',
-        image: ''
+        image: '',
+        offlineCollectorName: '',
+        offlineCollectorEmail: ''
     });
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
@@ -19,7 +21,7 @@ const CreateCampaign = () => {
         setLoading(true);
         try {
             await createCampaign(formData);
-            alert('Campaign created! Waiting for Admin approval.');
+            alert('Campaign created successfully!');
             navigate('/');
         } catch (err) {
             alert(err.response?.data?.message || 'Error creating campaign');
@@ -94,6 +96,26 @@ const CreateCampaign = () => {
                             type="text" required placeholder="https://image-link.com/photo.jpg"
                             className="w-full p-3 border rounded-xl outline-none focus:ring-2 focus:ring-indigo-500 bg-gray-50"
                             onChange={(e) => setFormData({ ...formData, image: e.target.value })}
+                        />
+                    </div>
+
+                    {/* Offline Money Collector Name */}
+                    <div>
+                        <label className="text-sm font-semibold text-gray-700 block mb-2">Offline Money Collector Name (Optional)</label>
+                        <input
+                            type="text" placeholder="Name of person collecting offline donations"
+                            className="w-full p-3 border rounded-xl outline-none focus:ring-2 focus:ring-indigo-500 bg-gray-50"
+                            onChange={(e) => setFormData({ ...formData, offlineCollectorName: e.target.value })}
+                        />
+                    </div>
+
+                    {/* Offline Money Collector Email */}
+                    <div>
+                        <label className="text-sm font-semibold text-gray-700 block mb-2">Offline Money Collector Email (Optional)</label>
+                        <input
+                            type="email" placeholder="collector@email.com"
+                            className="w-full p-3 border rounded-xl outline-none focus:ring-2 focus:ring-indigo-500 bg-gray-50"
+                            onChange={(e) => setFormData({ ...formData, offlineCollectorEmail: e.target.value })}
                         />
                     </div>
 

@@ -19,14 +19,19 @@ const campaignSchema = mongoose.Schema({
     status: {
         type: String,
         enum: ['pending', 'active', 'completed', 'rejected'],
-        default: 'pending'
+        default: 'active'
     },
+
+    // Offline money collector name and email
+    offlineCollectorName: { type: String, default: '' },
+    offlineCollectorEmail: { type: String, default: '' },
 
     // List of people who donated
     donors: [
         {
             name: String,
             amount: Number,
+            type: { type: String, enum: ['online', 'offline'], default: 'online' },
             date: { type: Date, default: Date.now }
         }
     ]
